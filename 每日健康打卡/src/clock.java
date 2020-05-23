@@ -1,0 +1,50 @@
+import org.openqa.selenium.*;
+import org.openqa.selenium.edge.EdgeDriver;
+import java.io.*;
+import java.util.concurrent.TimeUnit;
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+public class clock {
+    public static void main(String[] args) throws IOException, AWTException, InterruptedException {
+        System.out.println("开始运行");
+        File file = new File("");
+        System.setProperty("webdriver.edge.driver", file.getAbsolutePath()+"/driver/msedgedriver.exe");
+        WebDriver driver = new EdgeDriver();
+        driver.manage().timeouts().pageLoadTimeout(5, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS);
+        driver.get("https://xsc-health.wh.sdu.edu.cn/mobile/index.html#/common/office/login");
+        driver.manage().window().maximize();
+        WebElement username = driver.findElement(By.name("username"));
+        WebElement password = driver.findElement(By.name("password"));
+        Robot rb = new Robot();
+        rb.keyPress(KeyEvent.VK_F12);
+        rb.keyRelease(KeyEvent.VK_F12);
+        rb.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        rb.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+        BufferedReader br = new BufferedReader(new FileReader(file.getAbsolutePath()+"/data.txt"));
+        String str = br.readLine();
+        br.close();
+        Thread.sleep(2000);
+        username.sendKeys(str);
+        password.sendKeys("whsdu@"+str);
+        rb.keyPress(KeyEvent.VK_CONTROL);
+        rb.keyPress(KeyEvent.VK_SHIFT);
+        rb.keyPress(KeyEvent.VK_M);
+        rb.keyRelease(KeyEvent.VK_M);
+        rb.keyRelease(KeyEvent.VK_CONTROL);
+        rb.keyRelease(KeyEvent.VK_SHIFT);
+        password.submit();
+        WebElement theme = driver.findElement(By.className("grid-item-wrapper"));
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].click();",theme);
+        WebElement cell = driver.findElement(By.className("item-cell"));
+        js.executeScript("arguments[0].click();", cell);
+        WebElement submit = driver.findElement(By.tagName("button"));
+        Thread.sleep(3000);
+        js.executeScript("arguments[0].click();", submit);
+        System.out.println("程序运行完成，即将退出");
+        Thread.sleep(2000);
+        driver.close();
+    }
+}
